@@ -1,0 +1,246 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+
+\title{Introduction}
+\subtitle{Contact-aware Control, Lecture 1}
+\author{by Sergei Savin}
+\centering
+\date{Fall 2020}
+
+
+
+\begin{document}
+\maketitle
+
+
+\begin{frame}{Content}
+
+\begin{itemize}
+\item Motivation
+\item Contact in Robotics
+\item Motivating example
+\begin{itemize}
+\item Two body oscillator, part 1-4
+\end{itemize}
+\item This course
+\begin{itemize}
+\item Content
+\item Tools we will use and learn
+\end{itemize}
+
+
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Motivation}
+\framesubtitle{Dynamics depends on contact}
+\begin{flushleft}
+
+\begin{figure}
+\minipage{0.32\textwidth}
+  \includegraphics[width=\linewidth]{Atlas-Bot.png}
+\endminipage\hfill
+\minipage{0.42\textwidth}
+  \includegraphics[width=\linewidth]{atlas in the air.jpeg}
+\endminipage\hfill
+\minipage{0.22\textwidth}%
+  \includegraphics[width=\linewidth]{Atlas_from_boston_dynamics.jpg}
+\endminipage
+
+\end{figure}
+
+\bigskip
+
+What do you find different between those poses in terms of mobility of the robot? 
+
+\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Contact in Robotics}
+% \framesubtitle{Parameter estimation}
+\begin{flushleft}
+
+There are a number of areas where changes in contact interaction between the robot and the environment is part of normal operation of the robot:
+
+\bigskip
+
+\begin{itemize}
+    \item walking robots;
+    \item collaborative robots;
+    \item robots performing tooling and other operations which do not involve moving the operated objects.
+\end{itemize}
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Motivating example}
+\framesubtitle{Two body oscillator, part 1}
+\begin{flushleft}
+
+\begin{figure}
+    \centering
+    \input{fig2.tex}
+    \caption{Two body oscillator diagram}
+    \label{fig:my_label}
+\end{figure}
+
+This is an example of a system that you know how to describe:
+
+\begin{equation}
+\begin{cases}
+    m_1 \ddot x_1 = k_1 x_1 + k_2 (x_2 - x_1 - l_{12}) \\
+    m_2 \ddot x_2 = -k_2 (x_2 - x_1 - l_{12})
+\end{cases}
+\end{equation}
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Motivating example}
+\framesubtitle{Two body oscillator, part 2}
+\begin{flushleft}
+
+\begin{figure}
+    \centering
+    \input{fig3.tex}
+    \caption{Two body oscillator diagram}
+\end{figure}
+
+Now we add a constraint:
+
+\begin{equation}
+x_2 = \text{const}
+\end{equation}
+
+How do we describe this one?
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Motivating example}
+\framesubtitle{Two body oscillator, part 3}
+\begin{flushleft}
+
+\begin{figure}
+    \centering
+    \input{fig4.tex}
+    \caption{Two body oscillator diagram}
+\end{figure}
+
+Now we add a different constraint:
+
+\begin{equation}
+x_2 - x_1 = \text{const}
+\end{equation}
+
+How do we describe this one?
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Motivating example}
+\framesubtitle{Two body oscillator, part 4}
+\begin{flushleft}
+
+\begin{figure}
+    \centering
+    \input{fig5.tex}
+    \caption{Two body oscillator diagram}
+\end{figure}
+
+Previously we saw \emph{equality constraints}. Now we add \emph{inequality constraints}, or \emph{unilateral constraints}:
+
+\begin{equation}
+x_2 \leq 1
+\end{equation}
+
+This is an even more complicated example than the previous one. Think about why.
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{This course}
+\framesubtitle{Content}
+\begin{flushleft}
+
+In this course we will:
+
+\begin{itemize}
+    \item learn how to describe systems with different types of constraints, how to automatically generate equations for them;
+    \item learn how to simulate them;
+    \item learn control methods for those systems;
+    \item understand methods for analysis of those systems;
+    \item learn how to do planning for systems with constraints;
+    \item learn how describe certain systems with constraints as a normal ODE, and when it is possible;
+    \item ...and many other useful things.
+\end{itemize}
+
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{This course}
+\framesubtitle{Tools we will use and learn}
+\begin{flushleft}
+
+We will use important and interesting tools, which will be useful for your further studies and professional work:
+
+\begin{itemize}
+    \item symbolic computation and auto-differentiation;
+    \item linear algebra, projectors, change of coordinates via fundamental subspaces and other tools;
+    \item numeric optimization: convex optimization, quadratic programming, second order cone programming;
+    \item linear control, non-linear control: LQR, CTC, inverse dynamics, stable error dynamics, and other concepts;
+    \item path planning with mixed-integer optimization;
+    \item ...and many other useful tools.
+\end{itemize}
+
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Homework}
+% \framesubtitle{Parameter estimation}
+\begin{flushleft}
+
+Try to write dynamic equations for the cases with equality constraints.
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\href{https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020}{github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020}}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\end{frame}
+
+\end{document}

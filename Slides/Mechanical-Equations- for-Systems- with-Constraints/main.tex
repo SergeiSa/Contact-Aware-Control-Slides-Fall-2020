@@ -1,0 +1,402 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+
+\title{Mechanical Equations for Systems with Constraints}
+\subtitle{Contact-aware Control, Lecture 3}
+\author{by Sergei Savin}
+\centering
+\date{Fall 2020}
+
+
+
+\begin{document}
+\maketitle
+
+
+\begin{frame}{Content}
+
+\begin{itemize}
+\item Newton equations
+\item Encoding: generalized coordinates
+\item Lagrange equations - derivation
+\begin{itemize}
+\item Part 1: right-hand-side
+\item Part 2-4: left-hand-side
+\end{itemize}
+\item Lagrange equations with reaction forces
+\begin{itemize}
+\item Motivation
+\item General form
+\end{itemize}
+\item Lagrange equations with constraints
+\item Read more
+\item Homework
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Newton equations}
+% \framesubtitle{O}
+\begin{flushleft}
+
+In classical mechanics, \emph{Newton equations} are accepted as an axiom and are given (for a system of points):
+
+\begin{equation}
+\label{eq:Newton}
+    m_i\ddot{\bo{r}}_i = \bo{f}_i, \ \ i = 1, \ ... \ m  
+\end{equation}
+
+Let us introduce new compound vectors $\bo{r}$ and $\bo{f}$:
+
+\begin{equation}
+    \bo{r} = \begin{bmatrix} \bo{r}_1 \\ ... \\ \bo{r}_m \end{bmatrix}, \ \ 
+    \bo{f} = \begin{bmatrix} \bo{f}_1 \\ ... \\ \bo{f}_m \end{bmatrix}, \ \
+    \bo{M} = \text{diag}(m_1, m_1, m_1, ..., m_m)
+\end{equation}
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Encoding: generalized coordinates}
+% \framesubtitle{O}
+\begin{flushleft}
+
+Let us introduce \emph{generalized coordinates} $\bo{q}$, such there is an encoding for all admissible $\bo{r}$:
+
+\begin{equation}
+    \bo{r} = \bo{r} (\bo{q})
+\end{equation}
+
+Let us observe two useful (but obvious) properties of this construct.
+
+\begin{block}{Lemma 1}
+$\frac{\partial \dot{\bo{r}}}{\partial \dot{\bo{q}}} = 
+\frac{\partial}{\partial \dot{\bo{q}}} ( \frac{\partial \bo{r}}{\partial \bo{q}}\dot{\bo{q}} ) =
+\frac{\partial \bo{r}}{\partial \bo{q}}$
+\end{block}
+
+
+\begin{block}{Lemma 2}
+$\frac{d}{dt} \frac{\partial \bo{r}}{\partial \bo{q}} = 
+\frac{\partial}{\partial \bo{q}} (\frac{\partial \bo{r}}{\partial \bo{q}}) \dot{\bo{q}} =
+% \frac{\partial^2 \bo{r}}{\partial \bo{q}^2} \dot{\bo{q}} = 
+\frac{\partial }{\partial \bo{q}} (\dot{\bo{r}})$
+\end{block}
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Lagrange equations - derivation}
+\framesubtitle{Part 1: right-hand-side}
+\begin{flushleft}
+
+Multiplying Newton eq. \eqref{eq:Newton} by the gen. coordinates jacobian $\partial \bo{r} / \partial \bo{q}$ we get:
+
+\begin{equation}
+    \bigg( \frac{\partial \bo{r}}{\partial \bo{q}} \bigg) ^\top 
+    \bo{M} \ddot{\bo{r}} = 
+    \bigg( \frac{\partial \bo{r}}{\partial \bo{q}} \bigg) ^\top 
+    \bo{f}
+\end{equation}
+
+We can define generalized forces as:
+
+\begin{equation}
+    \tau = \bigg( \frac{\partial \bo{r}}{\partial \bo{q}} \bigg) ^\top \bo{f}
+\end{equation}
+
+And we end with a very simple right-hand-side:
+
+\begin{equation}
+    \bigg( \frac{\partial \bo{r}}{\partial \bo{q}} \bigg) ^\top 
+    \bo{M} \ddot{\bo{r}} = 
+    \tau
+\end{equation}
+
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Lagrange equations - derivation}
+\framesubtitle{Part 2: left-hand-side}
+\begin{flushleft}
+
+Let us rewrite the left-hand-side:
+
+\[
+    \bigg( \frac{\partial \bo{r}}{\partial \bo{q}} \bigg) ^\top 
+    \bo{M} \ddot{\bo{r}} = 
+    \textcolor{myblue}
+    {\bigg( \frac{\partial \bo{r}}{\partial \bo{q}} \bigg) ^\top 
+    \frac{d}{dt} (\bo{M} \dot{\bo{r}})}
+\]
+
+Let us notice that:
+
+\begin{equation}
+    \frac{d}{dt} \bigg(\bigg( \frac{\partial \bo{r}}{\partial \bo{q}} \bigg) ^\top
+    \bo{M} \dot{\bo{r}} \bigg) = 
+    \frac{d}{dt} \bigg( \frac{\partial \bo{r}}{\partial \bo{q}} \bigg) ^\top
+    \bo{M} \dot{\bo{r}} + 
+    \textcolor{myblue}
+    {\bigg( \frac{\partial \bo{r}}{\partial \bo{q}} \bigg) ^\top \frac{d}{dt}
+    (\bo{M} \dot{\bo{r}})}
+\end{equation}
+
+Then:
+
+\[
+    \textcolor{myblue}
+    {\bigg( \frac{\partial \bo{r}}{\partial \bo{q}} \bigg) ^\top 
+    \frac{d}{dt} (\bo{M} \dot{\bo{r}})} = 
+    \frac{d}{dt} \bigg(\bigg( \frac{\partial \bo{r}}{\partial \bo{q}} \bigg) ^\top
+    \bo{M} \dot{\bo{r}} \bigg) - 
+    \frac{d}{dt} \bigg( \frac{\partial \bo{r}}{\partial \bo{q}} \bigg) ^\top
+    \bo{M} \dot{\bo{r}}
+\]
+
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Lagrange equations - derivation}
+\framesubtitle{Part 3: left-hand-side}
+\begin{flushleft}
+
+Use both lemmas:
+
+\[
+    \frac{d}{dt} \bigg(\bigg( \frac{\partial \bo{r}}{\partial \bo{q}} \bigg) ^\top
+    \bo{M} \dot{\bo{r}} \bigg) - 
+    \frac{d}{dt} \bigg( \frac{\partial \bo{r}}{\partial \bo{q}} \bigg) ^\top
+    \bo{M} \dot{\bo{r}} =
+\]
+\[
+    \frac{d}{dt} \bigg( 
+    \textcolor{myblue}{ \bigg( \frac{\partial \dot{\bo{r}}}{\partial \dot{\bo{q}}} \bigg) ^\top
+    \bo{M} \dot{\bo{r}} }
+    \bigg) - 
+    \textcolor{mygreen}{\bigg( \frac{\partial \dot{\bo{r}}}{\partial \bo{q}} \bigg) ^\top
+    \bo{M} \dot{\bo{r}}}
+\]
+
+Using the fact that $bo{M}$ is symmetric:
+
+\[
+\frac{\partial (\dot{\bo{r}} ^\top \bo{M} \dot{\bo{r}}) }{\partial \dot{\bo{q}}} = 
+2 \textcolor{myblue}{\bigg( \frac{\partial \dot{\bo{r}}  }{\partial \dot{\bo{q}}} \bigg)^\top \bo{M} \dot{\bo{r}}},
+\]
+
+and:
+
+\[
+\frac{\partial (\dot{\bo{r}}^\top \bo{M} \dot{\bo{r}})}{\partial \bo{q}} = 
+2 \textcolor{mygreen}{\bigg( \frac{\partial \dot{\bo{r}} }{\partial \bo{q}} \bigg)^\top 
+\bo{M} \dot{\bo{r}}}
+\]
+
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Lagrange equations - derivation}
+\framesubtitle{Part 4: left-hand-side}
+\begin{flushleft}
+
+Substitute:
+\[    
+    \frac{d}{dt} \bigg( 
+    \textcolor{myblue}{ \bigg( \frac{\partial \dot{\bo{r}}}{\partial \dot{\bo{q}}} \bigg) ^\top
+    \bo{M} \dot{\bo{r}} }
+    \bigg) - 
+    \textcolor{mygreen}{\bigg( \frac{\partial \dot{\bo{r}}}{\partial \bo{q}} \bigg) ^\top
+    \bo{M} \dot{\bo{r}}} 
+    =
+    \frac{d}{dt} \bigg( 
+   \frac{\partial ( 0.5 \dot{\bo{r}} ^\top \bo{M} \dot{\bo{r}}) }{\partial \dot{\bo{q}}}
+    \bigg) - 
+    \frac{\partial (0.5 \dot{\bo{r}}^\top \bo{M} \dot{\bo{r}})}{\partial \bo{q}}
+\]
+
+Now we can remember that kinetic energy is defined as: $T = 0.5 \dot{\bo{r}} ^\top \bo{M} \dot{\bo{r}}$, and rewrite the left-hand-side:
+
+\[    
+    \frac{d}{dt} \bigg( 
+   \frac{\partial ( 0.5 \dot{\bo{r}} ^\top \bo{M} \dot{\bo{r}}) }{\partial \dot{\bo{q}}}
+    \bigg) - 
+    \frac{\partial (0.5 \dot{\bo{r}}^\top \bo{M} \dot{\bo{r}})}{\partial \bo{q}}
+    =
+    \frac{d}{dt} \bigg( 
+   \frac{\partial T }{\partial \dot{\bo{q}}}
+    \bigg) - 
+    \frac{\partial T }{\partial \bo{q}}
+\]
+
+\bigskip
+
+Thus we find the classic form of the Lagrange equations:
+
+\begin{equation}
+    \frac{d}{dt} \bigg( 
+   \frac{\partial T }{\partial \dot{\bo{q}}}
+    \bigg) - 
+    \frac{\partial T }{\partial \bo{q}} = \tau
+\end{equation}
+
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Lagrange equations with reaction forces}
+\framesubtitle{Motivation}
+\begin{flushleft}
+
+Assume we additionally have reaction force $\lambda \in \mathbb{R}^3$, acting on the point $\bo{r}_1$. We can easily see, that the equation \eqref{eq:Newton} will attain form:
+
+\begin{equation}
+\label{eq:NewtonWithReactionForce}
+    \bo{M}\ddot{\bo{r}} = \bo{f} + 
+    \begin{bmatrix} \bo{I}_{3 \times 3} \\ \bo{0}_{3(m-1) \times 3} \end{bmatrix} 
+    \lambda
+\end{equation}
+
+After multiplying \eqref{eq:NewtonWithReactionForce} by the jacobian $\partial \bo{r} / \partial \bo{q}$ it takes the form:
+
+\begin{equation}
+\label{eq:LagrangeWithReactionForce}
+    \frac{d}{dt} \bigg( 
+    \frac{\partial T }{\partial \dot{\bo{q}}}
+    \bigg) - 
+    \frac{\partial T }{\partial \bo{q}} = \tau + 
+    \bigg( \frac{\partial \bo{r}_1 }{\partial \bo{q}} \bigg) ^\top
+    \lambda
+\end{equation}
+
+Notice that by the same logic we can show that for reactions force in $\lambda \in \mathbb{R}^3$ (and indeed, any external force) applied to the point $\bo{r}_j$, Lagrange equations will take the form:
+
+\begin{equation}
+    \frac{d}{dt} \bigg( 
+    \frac{\partial T }{\partial \dot{\bo{q}}}
+    \bigg) - 
+    \frac{\partial T }{\partial \bo{q}} = \tau + 
+    \bigg( \frac{\partial \bo{r}_j }{\partial \bo{q}} \bigg) ^\top
+    \lambda
+\end{equation}
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Lagrange equations with reaction forces}
+\framesubtitle{General form}
+\begin{flushleft}
+
+In general, for the reaction force that enforce a constraint $\bo{g}(\bo{q}) \in \mathbb{R}^k$, the general form of the Lagrange equation is:
+
+\begin{equation}
+    \frac{d}{dt} \bigg( 
+    \frac{\partial T }{\partial \dot{\bo{q}}}
+    \bigg) - 
+    \frac{\partial T }{\partial \bo{q}} = \tau + 
+    \bigg( \frac{\partial \bo{g} }{\partial \bo{q}} \bigg) ^\top
+    \lambda
+\end{equation}
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Lagrange equations with constraints}
+\framesubtitle{General form}
+\begin{flushleft}
+
+In order to describe a system with explicit constraints $\bo{g}(\bo{q}) \in \mathbb{R}^k$, we need to explicitly include them in the dynamics formulation:
+
+\begin{equation}
+\begin{cases}
+    \frac{d}{dt} \big( 
+    \frac{\partial T }{\partial \dot{\bo{q}}}
+    \big) - 
+    \frac{\partial T }{\partial \bo{q}} = \tau + 
+    \big( \frac{\partial \bo{g} }{\partial \bo{q}} \big) ^\top
+    \lambda \\
+    \bo{g}(\bo{q}) = 0
+\end{cases}
+\end{equation}
+
+\begin{block}{Statement}
+A system with explicit constraint $\bo{g}(\bo{q}) = 0$ can be replaced by an equivalent system with no explicit constraints, with a different choice of generalized coordinates.
+\end{block}
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Read more}
+% \framesubtitle{Parameter estimation}
+\begin{flushleft}
+
+You can read more about Lagrange equation derivation at:
+
+\begin{itemize}
+    \item \href{http://kestrel.nmt.edu/~raymond/classes/ph321/notes/lagrange/lagrange.pdf}{Chapter 1. Lagrange’s equations} - very simple and good.
+    \item \href{https://ocw.mit.edu/courses/mechanical-engineering/2-003j-dynamics-and-control-i-spring-2007/lecture-notes/lec15.pdf}{Lecture 15 Lagrangian Dynamics: Derivations of Lagrange’s Equations} - a different but also a classic approach
+    \item \href{https://scholar.harvard.edu/files/david-morin/files/cmchap6.pdf}{Chapter 6. The Lagrangian Method. David Morin} - a version less derivation, more examples, and with poetry
+\end{itemize}
+
+\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Homework}
+% \framesubtitle{Parameter estimation}
+\begin{flushleft}
+
+Write derivation of dynamics equations for a three link mechanism with fixed end effector (see figure). It should have tree generalized coordinates, two constraints. You can do the derivation on paper, in latex or using symbolic computations.
+
+\begin{figure}
+    \centering
+    \input{fig1}
+    %\caption{Caption}
+    %\label{fig:my_label}
+\end{figure}
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\href{https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020}{github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020}}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\end{frame}
+
+\end{document}

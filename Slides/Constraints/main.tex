@@ -1,0 +1,261 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+
+\title{Constraints}
+\subtitle{Contact-aware Control, Lecture 2}
+\author{by Sergei Savin}
+\centering
+\date{Fall 2020}
+
+
+
+\begin{document}
+\maketitle
+
+
+\begin{frame}{Content}
+
+\begin{itemize}
+\item Dynamical systems
+\begin{itemize}
+\item Example 1: pendulum dynamics equations
+\end{itemize}
+\item Constraints
+\item Example 2: double oscillator
+\begin{itemize}
+\item parts 1-5
+\end{itemize}
+\item Homework
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Dynamical systems}
+% \framesubtitle{O}
+\begin{flushleft}
+
+\emph{Dynamical system} is this course means an ODE. A general form of an ODE is:
+
+\begin{equation}
+    \dot{\bo{x}} = \bo{f}(\bo{x}, t) 
+\end{equation}
+
+Any ODE non-degenerate can be represented in this form. 
+
+\begin{exampleblock}{Example 1}
+For example, consider pendulum dynamics equations:
+
+\begin{equation}
+    \ddot{\phi} = -l sin(\phi) 
+\end{equation}
+
+Introducing a change of coordinates $\bo{x} = [\phi \ \dot{\phi}]$ we get:
+
+\begin{equation}
+    \begin{bmatrix} \dot{x}_1 \\ \dot{x}_2 \end{bmatrix} = 
+    \begin{bmatrix} x_2 \\ -l sin(x_1) \end{bmatrix} 
+\end{equation}
+
+\end{exampleblock}
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Constraints}
+% \framesubtitle{O}
+\begin{flushleft}
+
+A \emph{constraint} is an equality that must hold for a given dynamical system, as its state evolves in time.
+
+\bigskip
+
+Consider a general-form dynamical system:
+
+\[
+    \dot{\bo{x}} = \bo{f}(\bo{x}, t) 
+\]
+
+A general-form algebraic constraint for this system can be written as:
+
+\begin{equation}
+    \bo{g}(\bo{x}) = 0 
+\end{equation}
+
+\bigskip
+
+A differential constraint would have form $\bo{g}(\bo{x}, \ \dot{\bo{x}}) = 0$. Both definitions are quite obvious.
+
+\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Example 2: double oscillator}
+\framesubtitle{Part 1}
+\begin{flushleft}
+
+Remember the example from the previous lecture:
+
+\begin{equation}
+\begin{cases}
+    m_1 \ddot x_1 = k_1 x_1 + k_2 (x_2 - x_1 - l_{12}) + f_1 (t) \\
+    m_2 \ddot x_2 = -k_2 (x_2 - x_1 - l_{12}) + f_2 (t)
+\end{cases}
+\end{equation}
+
+where $f_1 (t)$ and $f_2 (t)$ are external forces (we add then to make some observations later).
+
+\bigskip
+
+We can require that $x_1 - x_2 = 1$, (meaning the distance between two bodies remains to be equal to 1). The equation is then changed to:
+
+\begin{equation}
+\begin{cases}
+    m_1 \ddot x_1 = k_1 x_1 + k_2 (x_2 - x_1 - l_{12}) + f_1 (t) \\
+    m_2 \ddot x_2 = -k_2 (x_2 - x_1 - l_{12}) + f_2 (t) \\
+    x_1 - x_2 = 1
+\end{cases}
+\end{equation}
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Example 2: double oscillator}
+\framesubtitle{Part 2}
+\begin{flushleft}
+
+We can differentiate the constraint twice and get the following equation:
+
+\begin{equation}
+\begin{cases}
+    m_1 \ddot x_1 = k_1 x_1 + k_2 (x_2 - x_1 - l_{12}) + f_1 (t) \\
+    m_2 \ddot x_2 = -k_2 (x_2 - x_1 - l_{12}) + f_2 (t) \\
+    \ddot x_1 - \ddot x_2 = 0
+\end{cases}
+\end{equation}
+
+which is equivalent to the original, as long as the initial condition satisfies the constraint $x_1 - x_2 = 1$. 
+
+\bigskip
+
+Notice, that this equation is not guaranteed to have a solution. In fact, first two equations remained unchanged, they lack \emph{force} that would ensure the constraint holds. 
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Example 2: double oscillator}
+\framesubtitle{Part 3}
+\begin{flushleft}
+
+Adding a new force that acts on the first equation:
+
+\begin{equation}
+\begin{cases}
+    m_1 \ddot x_1 = k_1 x_1 + k_2 (x_2 - x_1 - l_{12}) + f_1 (t) + \lambda \\
+    m_2 \ddot x_2 = -k_2 (x_2 - x_1 - l_{12}) + f_2 (t) \\
+    \ddot x_1 - \ddot x_2 = 0
+\end{cases}
+\end{equation}
+
+It is now \emph{always possible} to find such $\lambda$ that the constraint holds.
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Example 2: double oscillator}
+\framesubtitle{Part 4}
+\begin{flushleft}
+
+Let us consider the case when $k_1 = k_2 = 0$, $m_1 = m_2 = 1$. Then we have:
+
+\begin{equation}
+\begin{cases}
+    \ddot x_1 = f_1 (t) + \lambda \\
+    \ddot x_2 = f_2 (t) \\
+    \ddot x_1 - \ddot x_2 = 0
+\end{cases}
+\end{equation}
+
+Notice that $\ddot x_1 = \ddot x_2 = f_2 (t)$ and $\lambda = f_2 (t) - f_1 (t)$. The work produced by this force is $\int \dot x_1 (f_2 (t) - f_1 (t)) dt$, and  in general does not have to be equal to 0.
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Example 2: double oscillator}
+\framesubtitle{Part 5}
+\begin{flushleft}
+
+Now consider that the \emph{reaction force} is applied to both equations and in this way:
+
+\begin{equation}
+\label{Example1}
+\begin{cases}
+    \ddot x_1 = f_1 (t) - \lambda \\
+    \ddot x_2 = f_2 (t) + \lambda\\
+    \ddot x_1 - \ddot x_2 = 0
+\end{cases}
+\end{equation}
+
+Then the reaction force is $\lambda = (f_2 (t) - f_1 (t)) / 2$ (Prove it!). The work produced by this force is $\int -\dot x_1 \frac{f_2 (t) - f_1 (t)}{2} + \dot x_2 \frac{f_2 (t) - f_1 (t)}{2} dt$, which is equal to zero as long as the constraint holds, since the constraint implies that $\dot x_1 - \dot x_2 = 0$.
+
+\bigskip
+
+Thus, there are some constraints that produce no mechanical work.
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Homework}
+% \framesubtitle{Parameter estimation}
+\begin{flushleft}
+
+(I) Prove that in \eqref{Example1} the value of the reaction force is $\lambda = (f_2 (t) - f_1 (t)) / 2$.
+
+\bigskip
+
+(II) For the system:
+
+\begin{equation}
+\begin{cases}
+    \ddot x_1 = f_1 (t) \\
+    \ddot x_2 = f_2 (t) \\
+    \ddot x_3 = 1
+\end{cases}
+\end{equation}
+
+add reaction force $\lambda$ that enforces constraint $\ddot x_1 + \ddot x_2 - \ddot x_3 = 0$, which would produce no work.
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\href{https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020}{github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020}}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\end{frame}
+
+\end{document}
