@@ -4,6 +4,9 @@
 * Lecture 2 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Constraints
 * Lecture 3 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Mechanical-Equations-%20for-Systems-20with-Constraints
 
+# Lecture videos
+
+* Lecture 1 - https://youtu.be/XWR1vY4PaMM
 
 # For contributors:
 
