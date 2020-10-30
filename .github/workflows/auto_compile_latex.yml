@@ -36,6 +36,12 @@ jobs:
         with:
           root_file: main.tex
           working_directory: Slides/Mechanical-Equations-for-Systems-with-Constraints/
+
+      - name: Compile LaTeX document Manipulator_Equations_for_Systems_with_Constraints
+        uses: xu-cheng/latex-action@master
+        with:
+          root_file: main.tex
+          working_directory: Slides/Manipulator_Equations_for_Systems_with_Constraints/
           
           
           
@@ -56,7 +62,13 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: Mechanical-Equations-for-Systems-with-Constraints.pdf
-          path: Slides/Mechanical-Equations-for-Systems-with-Constraints/main.pdf              
+          path: Slides/Mechanical-Equations-for-Systems-with-Constraints/main.pdf      
+
+      - name: Save Manipulator_Equations_for_Systems_with_Constraints artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: Manipulator_Equations_for_Systems_with_Constraints.pdf
+          path: Slides/Manipulator_Equations_for_Systems_with_Constraints/main.pdf         
           
           
           
@@ -70,6 +82,7 @@ jobs:
           git add Slides/Introduction/main.pdf
           git add Slides/Constraints/main.pdf
           git add Slides/Mechanical-Equations-for-Systems-with-Constraints/main.pdf
+          git add Slides/Manipulator_Equations_for_Systems_with_Constraints/main.pdf
           
           git commit -m "Update compiled PDFs"
           git push
