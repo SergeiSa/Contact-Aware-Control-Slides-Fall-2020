@@ -8,6 +8,8 @@
 
 * Lecture 1 - https://youtu.be/XWR1vY4PaMM
 * Lecture 2 - https://youtu.be/mx31fBF-0cM
+* Lecture 3 - https://youtu.be/yRFaH5x4IJY
+* Lecture 4 - https://youtu.be/6Tz1z5zgQ8A
 
 # For contributors:
 
