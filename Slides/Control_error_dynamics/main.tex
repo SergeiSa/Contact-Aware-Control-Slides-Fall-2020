@@ -3,8 +3,8 @@
 \input{settings.tex}
 
 
-\title{Solving Mechanical Equations with Constraints}
-\subtitle{Contact-aware Control, Lecture 5}
+\title{Error dynamics and control of systems with constraints}
+\subtitle{Contact-aware Control, Lecture 6}
 \author{by Sergei Savin}
 \centering
 \date{Fall 2020}
@@ -18,15 +18,25 @@
 \begin{frame}{Content}
 
 \begin{itemize}
-\item Solving first order ODEs
-\item Solving second order ODEs
-\item Mechanical equations
-\item Mechanical equations with constraints
-\item Constraint drift
+\item Trajectory tracking; desired trajectory
+\item Desired trajectory and constraints
+\item Error dynamics
 \begin{itemize}
-\item Part 1: right-hand-side
-\item Part 2-3: velocities
-\item Part 4-6: positions
+\item Definition
+\item Design
+\item Computed torque controller
+\item Feedback and feedforward
+\end{itemize}
+\item Control and constraints
+\begin{itemize}
+\item Calculating control input expressing reaction forces out
+\item Calculating control input, accelerations and reaction forces simultaneously
+\item Feasibility conditions
+\end{itemize}
+\item Algebra recap
+\begin{itemize}
+\item Fundamental subspaces
+\item Projectors
 \end{itemize}
 \item Read more
 \item Homework
@@ -36,170 +46,244 @@
 
 
 
-\begin{frame}{Solving first order ODEs}
+\begin{frame}{Trajectory tracking; desired trajectory}
 % \framesubtitle{O}
 \begin{flushleft}
 
-General form first order ODE has the form:
+Trajectory tracking is a control problem that says:
 
-\begin{equation}
-\label{eq:simple_ODE}
-\dot{\bo{x}} = \bo{f}(\bo{x}, t)
-\end{equation}
-
-Solving it, means finding such $\bo{x}(t)$ that eq. \eqref{eq:simple_ODE} becomes equality. A typical strategy for solving it is a "forward" scheme, for example:
-
-\begin{equation}
-\label{eq:Euler_scheme}
-\bo{x}_{i+1} = \bo{x}_i + \bo{f}(\bo{x}_i, t) \Delta t
-\end{equation}
-
-which is called forward Euler scheme. Backward (implicit) scheme would only be different in the function $\bo{f}$ being evaluated at the point $\bo{x}_{i+1}$: $\bo{f}(\bo{x}_{i+1}, t)$ Other famous schemes are Runge-Kutta, variable step schemes, etc.
-
-\end{flushleft}
-\end{frame}
-
-
-
-
-\begin{frame}{Solving second order ODEs}
-% \framesubtitle{O}
-\begin{flushleft}
-
-Second order ODE have the form:
-
-\begin{equation}
-\label{eq:secondOrderODE}
-\ddot{\bo{x}} = \bo{g}(\dot{\bo{x}}, \bo{x}, t)
-\end{equation}
-
-\begin{block}{Observation 1}
-Every second order differential equation expressed in the normal form can be re-expressed as a system of first order ODEs.
+\begin{block}{Trajectory tracking}
+Find such \emph{control law} $\bo{u} = \bo{u}(\bo{x}, t)$ that solution of the dynamical system $\dot{\bo{x}} = \bo{f}(\bo{x}, \bo{u}, t)$ converges to the \emph{desired trajectory} $\bo{x}^* = \bo{x}^*(t)$.
 \end{block}
 
-But we don't have to go this rout. Instead we can, for example, use Taylor expansion to solve the equations:
+For mechanical systems specifically we can write it as:
 
-\begin{equation}
-\label{eq:Taylor_scheme}
-\begin{cases}
-\dot{\bo{x}}_{i+1} = \dot{\bo{x}}_i + \bo{g}(\dot{\bo{x}}_i, \bo{x}_i, t) \Delta t \\
-\bo{x}_{i+1} = \bo{x}_i + \dot{\bo{x}}_i \Delta t + 0.5 \bo{g}(\dot{\bo{x}}_i, \bo{x}_i, t) \Delta t^2
-\end{cases}
-\end{equation}
+\begin{block}{Trajectory tracking for mechanical systems}
+Find such control law $\bo{u} = \bo{u}(\bo{q}, \dot{\bo{q}}, t)$ that solution of the dynamical system $\bo{H} \ddot{\bo{q}} + \bo{c} = \bo{T}\bo{u}$ converges to the desired trajectory $\bo{q}^* = \bo{q}^*(t)$.
+\end{block}
 
 \end{flushleft}
 \end{frame}
 
 
 
-
-\begin{frame}{Mechanical equations}
+\begin{frame}{Desired trajectory and constraints}
 % \framesubtitle{O}
 \begin{flushleft}
 
-Consider this special form of second order differential equations:
-
-\begin{equation}
-\bo{H} \ddot{\bo{q}} + \bo{c} = \tau
-\end{equation}
-
-First thing you can do is to rewrite it in the form where higher order derivatives are collected on the left hand side:
-
-\begin{equation}
-\ddot{\bo{q}} = \bo{H}^{-1} (\tau - \bo{c})
-\end{equation}
-
-Notice that for mechanical systems $\bo{H}$ is always invertible. Prove it, using the fact $\bo{H}$ is the quadratic form matrix of the kinetic energy:  $T = 0.5 \dot{\bo{q}}^\top\bo{H}\dot{\bo{q}}$
+Assume your system is subject to constraints $\bo{g}(\bo{q}) = 0$, and you have desired trajectory $\bo{q}^* = \bo{q}^*(t)$. Then, unless $\bo{g}(\bo{q}^*(t)) = 0$, the desired trajectory is not valid.
 
 \bigskip
 
-Next we either turn it into a system of first order ODEs and solve it using methods for those, or leave it a second order ODE and solve it, for example, using \eqref{eq:Taylor_scheme}.
+You can find first two time derivatives of the desired trajectory: $\dot{\bo{q}}^*(t)$ and $\ddot{\bo{q}}^*(t)$. Defining $\bo{F} = \frac{\partial \bo{g}}{\partial \bo{q}}$ we can write first and second derivative of the constraint as: $\dot{\bo{g}}(\bo{q}) = \bo{F}\dot{\bo{q}}$ and $\ddot{\bo{g}}(\bo{q}) = \bo{F}\ddot{\bo{q}} + \dot{\bo{F}}\dot{\bo{q}}$. Therefor we can write implied conditions on the desired trajectory:
+
+\begin{equation}
+    \dot{\bo{g}}(\bo{q}^*) = \bo{F}\dot{\bo{q}}^* = 0
+\end{equation}
+\begin{equation}
+    \ddot{\bo{g}}(\bo{q}^*) = \bo{F}\ddot{\bo{q}}^* + \dot{\bo{F}}\dot{\bo{q}}^* = 0
+\end{equation}
 
 \end{flushleft}
 \end{frame}
 
 
-\begin{frame}{Mechanical equations with constraints}
+
+
+
+\begin{frame}{Error dynamics}
+\framesubtitle{Definition}
+\begin{flushleft}
+
+We can rewrite equations of dynamics in the normal form:
+
+\begin{equation}
+\label{eq:dynamics_normal}
+\ddot{\bo{q}} = \bo{H}^{-1} (\bo{T}\bo{u} - \bo{c})
+\end{equation}
+
+Let us define \emph{control error} $\bo{e}$ as follows: 
+
+\begin{equation}
+\label{eq:control_error}
+\bo{e} = \bo{q}^* - \bo{q}
+\end{equation}
+
+Then we can find its second derivative as: $\ddot{\bo{e}} = \ddot{\bo{q}}^* - \ddot{\bo{q}}$:
+
+\begin{equation}
+\label{eq:control_error_derivative}
+\ddot{\bo{e}} = \ddot{\bo{q}}^* - \bo{H}^{-1} (\bo{T}\bo{u} - \bo{c})
+\end{equation}
+
+If error dynamics is \emph{stable}, it means the error will approach zero as the time approaches infinity. Is a good thing.
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Error dynamics}
+\framesubtitle{Design}
+\begin{flushleft}
+
+We can decide that we want error dynamics to have this form:
+
+\begin{equation}
+\label{eq:error_dynamics_stable}
+\ddot{\bo{e}} + \bo{K}_d\dot{\bo{e}} + \bo{K}_p\bo{e} = 0
+\end{equation}
+
+where $\bo{K}_d$ and $\bo{K}_p$ are diagonal positive-definite matrices. Equation \eqref{eq:error_dynamics_stable} is stable. So, if we achieve that our error dynamics takes this form, we make it stable. 
+
+\bigskip
+
+Let us use \eqref{eq:control_error_derivative} to re-write \eqref{eq:error_dynamics_stable}:
+
+\begin{equation}
+\ddot{\bo{q}}^* - \bo{H}^{-1} (\bo{T}\bo{u} - \bo{c}) + \bo{K}_d\dot{\bo{e}} + \bo{K}_p\bo{e} = 0
+\end{equation}
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Error dynamics}
+\framesubtitle{Computed torque controller}
+\begin{flushleft}
+
+So, we have:
+
+\begin{equation}
+\ddot{\bo{q}}^* - \bo{H}^{-1} (\bo{T}\bo{u} - \bo{c}) + \bo{K}_d\dot{\bo{e}} + \bo{K}_p\bo{e} = 0
+\end{equation}
+
+Now we can multiply it by $\bo{H}$ (because it is invertible, so it's null space is trivial and we do not annihilate any part of the equation):
+
+\begin{equation}
+% \label{eq:CTC}
+\bo{H}(\ddot{\bo{q}}^* + \bo{K}_d\dot{\bo{e}} + \bo{K}_p\bo{e}) - (\bo{T}\bo{u} - \bo{c}) = 0
+\end{equation}
+
+...and then express $\bo{u}$ out:
+
+\begin{equation}
+\label{eq:CTC}
+\bo{u} = \bo{T}^+(\bo{H}(\ddot{\bo{q}}^* + \bo{K}_d\dot{\bo{e}} + \bo{K}_p\bo{e}) + \bo{c})
+\end{equation}
+
+This is called a \emph{computed torque controller} (CTC), and it assumes that $(\bo{H}(\ddot{\bo{q}}^* + \bo{K}_d\dot{\bo{e}} + \bo{K}_p\bo{e}) + \bo{c})$ is in the column space of $\bo{T}$.
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Error dynamics}
+\framesubtitle{Feedback and feedforward}
+\begin{flushleft}
+
+Thus CTC has the form: $\bo{u} = \bo{T}^+(\bo{H}(\ddot{\bo{q}}^* + \bo{K}_d\dot{\bo{e}} + \bo{K}_p\bo{e}) + \bo{c})$
+
+\bigskip
+
+We can separate feedback part $\bo{u}_{FB}$ and feedforward part $\bo{u}_{FF}$:
+
+\begin{equation}
+\bo{u} = \bo{u}_{FB} + \bo{u}_{FF}
+\end{equation}
+
+\begin{equation}
+\bo{u}_{FB} = \bo{T}^+\bo{H}(\bo{K}_d\dot{\bo{e}} + \bo{K}_p\bo{e})
+\end{equation}
+
+\begin{equation}
+\bo{u}_{FF} = \bo{T}^+(\bo{H}\ddot{\bo{q}}^* + \bo{c})
+\end{equation}
+
+Notice that feedback part is just a PD (proportional-derivative) controller with varying gains, while the feedforward part is just $\bo{u}$ expressed out of the robot's dynamics $\bo{H} \ddot{\bo{q}} + \bo{c} = \bo{T}\bo{u}$; the latter - finding  $\bo{u}$ directly from the dynamics - is called \emph{inverse dynamics}.
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Control and constraints}
 \framesubtitle{Part 1}
 \begin{flushleft}
 
-Now, how do we solve this system of equations?
+Dynamical system with constraints can be written as:
 
 \begin{equation}
+\label{eq:dynamics_constrained}
 \begin{cases}
-    \bo{H} \ddot{\bo{q}} + \bo{c} = \tau + \bo{F}^\top \lambda \\
-    \bo{g}(\bo{q}) = 0
-\end{cases}
-\end{equation}
-
-Notice there are two unknown: $\bo{q}$ and $\lambda$. One has a second order derivative, another one is an algebraic variable. Also, notice that the first vector equation in the case includes derivatives, while the other does not. Equations like this are called DAE - \emph{differential algebraic equations}.
-
-\bigskip
-
-There are a number of methods of solving DAE, but when one of the equation is algebraic, the rule of thumb is to differentiate it first, so we can use it in finding higher order derivatives.
-
-\end{flushleft}
-\end{frame}
-
-
-
-\begin{frame}{Mechanical equations with constraints}
-\framesubtitle{Part 2}
-\begin{flushleft}
-
-After differentiating $\bo{g}(\bo{q}) = 0$ twice, and defining $\bo{F} = \frac{\partial \bo{g}}{\partial \bo{q}}$, we get:
-
-\begin{equation}
-\begin{cases}
-    \bo{H} \ddot{\bo{q}} + \bo{c} = \tau + \bo{F}^\top \lambda \\
+    \bo{H} \ddot{\bo{q}} + \bo{c} = \bo{T}\bo{u} + \bo{F}^\top \lambda \\
     \bo{F} \ddot{\bo{q}} + \dot{\bo{F}} \dot{\bo{q}} = 0
 \end{cases}
 \end{equation}
 
-Now we can treat both $\ddot{\bo{q}}$ and $\lambda$ as unknown algebraic variables, and solve for them. This leads to a system:
+How do we apply the ideas about stable error dynamics here?
+
+\bigskip
+
+One naive approach is to define a new variable $\bo{v} = \bo{T}\bo{u} + \bo{F}^\top \lambda$ and rewrite the first equation in the system \eqref{eq:dynamics_constrained} as:
 
 \begin{equation}
-\begin{bmatrix}
-    \bo{H} & -\bo{F}^\top \\
-    \bo{F} & \bo{0}
-\end{bmatrix}
-\begin{bmatrix}
-    \ddot{\bo{q}} \\
-    \lambda
-\end{bmatrix}
-=
-\begin{bmatrix}
-    \tau - \bo{c} \\
-    -\dot{\bo{F}} \dot{\bo{q}}
-\end{bmatrix}
+\bo{H} \ddot{\bo{q}} + \bo{c} = \bo{v}
 \end{equation}
 
-Matrix on the left hand side is invertible, as long as the reaction forces are uniquely defined (in other words, as long as $\bo{F}^\top$ has a trivial null space).
+Here it seems we can apply CTC directly. But we need to study how (and when) it will work.
 
 \end{flushleft}
 \end{frame}
 
 
 
-\begin{frame}{Mechanical equations with constraints}
-\framesubtitle{Part 3}
+\begin{frame}{Control and constraints}
+\framesubtitle{Part 2}
 \begin{flushleft}
 
-Let us define $\bo{M} = \begin{bmatrix}
+We are considering equation $\bo{H} \ddot{\bo{q}} + \bo{c} = \bo{v}$. CTC for this case will take form:
+
+\begin{equation}
+\label{eq:CTC_constrained_1}
+\bo{v} = \bo{H}(\ddot{\bo{q}}^* + \bo{K}_d\dot{\bo{e}} + \bo{K}_p\bo{e}) + \bo{c}
+\end{equation}
+
+But remember that $\bo{v} = \bo{T}\bo{u} + \bo{F}^\top \lambda$. We can always try to do our best to find such $\bo{u}$ that it holds, but what about $\lambda$?
+
+\begin{block}{On the value of $\lambda$}
+We should always keep in mind that $\lambda$ is uniquely determined for any given $\bo{u}$. So, while we can't assign $\lambda$ arbitrarily, as long as we assigned $\bo{u}$, we did in fact determined what value $\lambda$ will take.
+\end{block}
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Control and constraints}
+\framesubtitle{Part 3: calculating control input expressing reaction forces out}
+\begin{flushleft}
+
+We remember from the previous lecture, that if we define $\bo{M} = \begin{bmatrix}
     \bo{H} & -\bo{F}^\top \\
     \bo{F} & \bo{0}
-\end{bmatrix}$. Assuming that you found left inverse of $\bo{M}$ - let us call it matrix $\bo{L}$, $\bo{L}\bo{M} = \bo{I}$ - you write expressions for both $\ddot{\bo{q}}$ and $\lambda$ in terms of its components:
+\end{bmatrix}$, then assuming $\bo{L}$ is a left inverse of $\bo{M}$, then we can write expressions for both $\ddot{\bo{q}}$ and $\lambda$ in terms of its components:
 
 \begin{equation}
 \label{eq:normal_form_DAE}
     \begin{cases}
         \ddot{\bo{q}} = 
-        \bo{L}_{11} ( \tau - \bo{c}) - \bo{L}_{12} \dot{\bo{F}} \dot{\bo{q}} \\ 
-        \lambda = \bo{L}_{21} ( \tau - \bo{c}) - \bo{L}_{22} \dot{\bo{F}} \dot{\bo{q}}
+        \bo{L}_{11} ( \bo{T}\bo{u} - \bo{c}) - \bo{L}_{12} \dot{\bo{F}} \dot{\bo{q}} \\ 
+        \lambda = \bo{L}_{21} ( \bo{T}\bo{u} - \bo{c}) - \bo{L}_{22} \dot{\bo{F}} \dot{\bo{q}}
     \end{cases}
 \end{equation}
 
-This is useful both for simulation and for getting an insight into the dynamical system behaviour. 
+We can try to use this naive way of finding relation between $\lambda$  and the control input $\bo{u}$, or one of the many more sophisticated ones. The idea would be to substitute the expression into the equation $\bo{v} = \bo{T}\bo{u} + \bo{F}^\top \lambda$, giving, in this case:
+
+\begin{equation}
+\bo{v} = \bo{T}\bo{u} + \bo{F}^\top (\bo{L}_{21} ( \bo{T}\bo{u} - \bo{c}) - \bo{L}_{22} \dot{\bo{F}} \dot{\bo{q}})
+\end{equation}
 
 \end{flushleft}
 \end{frame}
@@ -207,24 +291,41 @@ This is useful both for simulation and for getting an insight into the dynamical
 
 
 
-
-\begin{frame}{Constraint drift}
-\framesubtitle{Part 1}
+\begin{frame}{Control and constraints}
+\framesubtitle{Part 4: calculating control input, accelerations and reaction forces simultaneously}
 \begin{flushleft}
 
-If we simply integrate the \eqref{eq:normal_form_DAE}, the error will gradually accumulate and values of $\dot{\bo{q}}$ and $\bo{q}$ will drift, even as $\ddot{\bo{q}}$ is calculated precisely.
-
-\bigskip
-
-There are a number of techniques for fixing the constraint drift. Here we will see how to use projection onto the constraint manifold to minimize the drift in the direction, violating constraints. Constraint manifold here is:
+Alternatively, we can try to simultaneously calculate generalized accelerations $\ddot{\bo{q}}$, control inputs $\bo{u}$ and reaction forces $\lambda$. This allows us to bring in the constraint equation $\bo{F} \ddot{\bo{q}} + \dot{\bo{F}} \dot{\bo{q}} = 0$:
 
 \begin{equation}
 \begin{cases}
-    \bo{g}(\bo{q}) = 0 \\
-    \bo{F} \dot{\bo{q}} = 0
+    \bo{H} \ddot{\bo{q}} + \bo{c} = \bo{v}\\
+    \bo{T}\bo{u} + \bo{F}^\top \lambda = \bo{v} \\
+    \bo{F} \ddot{\bo{q}} + \dot{\bo{F}} \dot{\bo{q}} = 0
 \end{cases}
 \end{equation}
 
+where unknowns are $\ddot{\bo{q}}$, $\bo{u}$ and $\lambda$. This is solved as a simple linear system:
+
+\begin{equation}
+    \begin{bmatrix}
+        \ddot{\bo{q}} \\
+        \bo{u} \\
+        \lambda \\
+    \end{bmatrix} 
+    =
+    \begin{bmatrix}
+        \bo{H} & 0 & 0 \\
+        0 & \bo{T} & \bo{F}^\top \\
+        \bo{F} & 0 & 0 \\
+    \end{bmatrix}^+
+    \begin{bmatrix}
+        \bo{v} - \bo{c} \\
+        \bo{v} \\
+        -\dot{\bo{F}} \dot{\bo{q}} \\
+    \end{bmatrix}    
+\end{equation}
+
 \end{flushleft}
 \end{frame}
 
@@ -232,54 +333,23 @@ There are a number of techniques for fixing the constraint drift. Here we will s
 
 
 
-\begin{frame}{Constraint drift}
-\framesubtitle{Part 2 - velocities}
+\begin{frame}{Algebra recap}
+\framesubtitle{Fundamental subspaces}
 \begin{flushleft}
 
-Let us consider the velocity constraint equation $\bo{F} \dot{\bo{q}} = 0$. All solutions to this equation are found in the form:
+\begin{block}{Column space}
+All possible outputs of a linear operator $\bo{A}$ are called \emph{column space} of $\bo{A}$. 
+\end{block}
 
-\begin{equation}
-    \dot{\bo{q}} = \bo{N}\bo{z}
-\end{equation}
+\begin{block}{Null space}
+  \emph{Null space} of $\bo{A}$ is the set of all vectors $\bo{x}$ that $\bo{A}$ maps to $0$
+\end{block}
 
-where $\bo{N} = \text{null}(\bo{F})$ - null space of the matrix $\bo{F}$, and $\bo{z}$ are parameters in the minimal coordinate representation (encoding) of the null space solution for this linear system. 
-
-
-\end{flushleft}
-\end{frame}
-
-
-
-
-
-\begin{frame}{Constraint drift}
-\framesubtitle{Part 3 - velocities}
-\begin{flushleft}
-
-
-We need to solve the following optimization:
-
-\begin{equation}
-\begin{aligned}
-& \underset{\bo{z}, \dot{\bo{q}}}{\text{minimize}}
-& & || \dot{\bo{q}}_e - \dot{\bo{q}} || \\
-& \text{subject to}
-& & \dot{\bo{q}} = \bo{N}\bo{z}
-%
-\end{aligned}
-\end{equation}
-
-where $\dot{\bo{q}}_e$ is the estimate of of the generalized velocity, possibly containing the drift.
+Now we can find all solutions to the system of equations $\bo{A} \bo{x} = \bo{0}$ by using functions that generate an orthonormal \emph{basis} in the null space of $\bo{A}$. In MATLAB it is function \texttt{null()}.
 
 \bigskip
 
-Substituting, we acquire a simple least squares problem of minimizing $||\dot{\bo{q}}_e - \bo{N}\bo{z}||$, whose solution is $\bo{z} = \bo{N}^+\dot{\bo{q}}_e$. Final solution is:
-
-\begin{equation}
-    \dot{\bo{q}} = \bo{N}\bo{N}^+\dot{\bo{q}}_e
-\end{equation}
-
-We can recognize it as a simple projection of the estimate $\dot{\bo{q}}_e$ onto the column space of $\bo{N}$.
+In MATLAB it can be constructed by calling function \texttt{orth()}. Both \texttt{orth()} and \texttt{null()} (as well as \texttt{rank()} and \texttt{pinv()}) simply call \texttt{svd()} and perform minimal computations on the resulting decomposition. You can check it by typing \texttt{open orth} in MATLAB command window.
 
 \end{flushleft}
 \end{frame}
@@ -288,28 +358,31 @@ We can recognize it as a simple projection of the estimate $\dot{\bo{q}}_e$ onto
 
 
 
-\begin{frame}{Constraint drift}
-\framesubtitle{Part 4 - positions}
+\begin{frame}{Algebra recap}
+\framesubtitle{Projectors}
 \begin{flushleft}
 
+We can project any vector onto a subspace using a \emph{projector}. 
 
-Now we can consider position. Equation $\bo{g}(\bo{q}) = 0$ is non-linear, so we can use Taylor expansion on it:
+\begin{block}{Definition 1}
+For linear space $\mathcal{L} \subset \mathbb{R}^n$, an orthogonal projector $\bo{P}$ onto it has properties: 
+\begin{itemize}
+    \item $\forall \bo{x} \in \mathbb{R}^n$, $\bo{P}\bo{x} \in \mathcal{L}$
+    \item $\forall \bo{x} \in \mathcal{L}$, $\bo{P}\bo{x} = \bo{x}$
+    \item $\forall \bo{y} \in \mathcal{L}$, $\bo{y}^\top (\bo{I} - \bo{P}) \bo{x} = 0$
+\end{itemize}
+\end{block}
+
+Projector $\bo{P}_c$ onto the column space of an operator $\bo{A}$ can be found as:
 
 \begin{equation}
-    \bo{g}(\bo{q}) \sim \bo{g}_0 + \bo{F} (\bo{q} - \bo{q}_0) 
+    \bo{P}_c = \bo{A}\bo{A}^+
 \end{equation}
 
-where $\bo{q}_0$ is the linearization point; you can choose the current position estimate $\bo{g}_e$ or the current desired position or anything else. Be aware that your choice will affect your solution.
-
-\bigskip
-
-General solution to the equation $\bo{g}_0 + \bo{F} (\bo{q} - \bo{q}_0) = 0$ is:
-
-\begin{equation}
-    \bo{q} =  \bo{q}_0 - \bo{F}^+\bo{g}_0 + \bo{N}\zeta
-\end{equation}
-
-where $\zeta$ serves the same role as $\bo{z}$ did previously, except for positions.
+% Projector $\bo{P}_n$ onto the null space of an operator $\bo{A}$ can be found as:
+% \begin{equation}
+%     \bo{P}_n = \bo{I} - \bo{A}^+\bo{A}
+% \end{equation}
 
 \end{flushleft}
 \end{frame}
@@ -317,33 +390,32 @@ where $\zeta$ serves the same role as $\bo{z}$ did previously, except for positi
 
 
 
-\begin{frame}{Constraint drift}
-\framesubtitle{Part 5 - positions}
+\begin{frame}{Control and constraints}
+\framesubtitle{Part 5: feasibility conditions}
 \begin{flushleft}
 
-
-We need to solve the following optimization to fix position drift:
-
-\begin{equation}
-\begin{aligned}
-& \underset{\zeta, \bo{q}}{\text{minimize}}
-& & || \bo{q}_e - \bo{q} || \\
-& \text{subject to}
-& & \bo{q} =  \bo{q}_0 - \bo{F}^+\bo{g}_0 + \bo{N}\zeta
-%
-\end{aligned}
-\end{equation}
-
-Same as before, we get a least-squares problem of minimizing $|| \bo{q}_e - \bo{q}_0 + \bo{F}^+\bo{g}_0 - \bo{N}\zeta ||$, with the solution $\zeta = \bo{N}^+(\bo{q}_e - \bo{q}_0 + \bo{F}^+\bo{g}_0)$. Finally, the expression for the fixed position is:
+Last expression suggests a simple feasibility condition for the existence of the control input that will generate the desired $\bo{v}$, namely that the left-hand-side vector of the linear system should lie in the column space of the matrix of the linear system:
 
 \begin{equation}
-   \bo{q}  = \bo{q}_0 - \bo{F}^+\bo{g}_0 + \bo{N}\bo{N}^+(\bo{q}_e - \bo{q}_0 + \bo{F}^+\bo{g}_0)
-\end{equation}
-
-and after collecting the terms:
-
-\begin{equation}
-   \bo{q}  = (\bo{I} - \bo{N}\bo{N}^+) (\bo{q}_0 - \bo{F}^+\bo{g}_0) + \bo{N}\bo{N}^+\bo{q}_e
+\left(
+\bo{I} - 
+\begin{bmatrix}
+        \bo{H} & 0 & 0 \\
+        0 & \bo{T} & \bo{F}^\top \\
+        \bo{F} & 0 & 0 \\
+    \end{bmatrix}
+    \begin{bmatrix}
+        \bo{H} & 0 & 0 \\
+        0 & \bo{T} & \bo{F}^\top \\
+        \bo{F} & 0 & 0 \\
+    \end{bmatrix}^+
+    \right)
+    \begin{bmatrix}
+        \bo{v} - \bo{c} \\
+        \bo{v} \\
+        -\dot{\bo{F}} \dot{\bo{q}} \\
+    \end{bmatrix}  
+    = 0
 \end{equation}
 
 \end{flushleft}
@@ -351,27 +423,24 @@ and after collecting the terms:
 
 
 
-
-\begin{frame}{Constraint drift}
-\framesubtitle{Part 6 - positions}
+\begin{frame}{Control and constraints}
+\framesubtitle{Part 6: feasibility conditions, simpler}
 \begin{flushleft}
 
-We can recognize that this expression:
+We can make a simple set of necessary conditions. Remember that $\bo{v} = \bo{T}\bo{u} + \bo{F}^\top \lambda$. Therefore, vector $\bo{v}$ should lie in the column space of the matrix $\begin{bmatrix} \bo{T} & \bo{F}^\top \end{bmatrix}$:
 
 \begin{equation}
-   \bo{q}  = (\bo{I} - \bo{N}\bo{N}^+) (\bo{q}_0 - \bo{F}^+\bo{g}_0) + \bo{N}\bo{N}^+\bo{q}_e
+\left(
+\bo{I} - 
+\begin{bmatrix} \bo{T} & \bo{F}^\top \end{bmatrix}
+\begin{bmatrix} \bo{T} & \bo{F}^\top \end{bmatrix}^+
+    \right)
+\bo{v}
+    = 0
 \end{equation}
-
-is a projection of the particular solution $\bo{q}_0 - \bo{F}^+\bo{g}_0$ onto the left null space of $\bo{N}$ and of the initial estimate $\bo{q}_e$ onto the column space of $\bo{N}$.
-
-\bigskip
-
-All these projections can be achieved with a single SVD decomposition of the matrix $\bo{F}$ to find $\bo{N}$, since $\bo{N}$ is orthonormal and its pseudoinverse is equivalent to its transpose.
 
 \end{flushleft}
 \end{frame}
-
-
 
 
 \begin{frame}{Read more}
@@ -381,7 +450,7 @@ All these projections can be achieved with a single SVD decomposition of the mat
 You can read more about Lagrange equation derivation at:
 
 \begin{itemize}
-    \item \href{https://idp.springer.com/authorize/casa?redirect_uri=https://link.springer.com/content/pdf/10.1007/BF01385770.pdf&casa_token=Qba9ilJAgVkAAAAA:qXdlKw8Au9f4ZzDqbNKCo5dg5q_vFeQVVCHqbshd1rmld1nKTUoaCzZR-w_SfgQYL9d_GqfhYZOyn5RpZw}{Führer, C. and Leimkuhler, B.J., 1991. Numerical solution of differential-algebraic equations for constrained mechanical motion. Numerische Mathematik, 59(1), pp.55-69.} - read to get the feeling of the field.
+    \item \emph{Slotine, J.J.E. and Li, W., 1987. On the adaptive control of robot manipulators. The international journal of robotics research, 6(3), pp.49-59} - learn more about error dynamics and similar techniques, is very interesting!
 \end{itemize}
 
 \end{flushleft}
@@ -392,7 +461,7 @@ You can read more about Lagrange equation derivation at:
 % \framesubtitle{Parameter estimation}
 \begin{flushleft}
 
-Simulate the motion of this robot forward (description of the robot is given in the previous lectures).
+Write a tracking controller for this robot (description of the robot is given in the previous lectures).
 
 \begin{figure}
     \centering
