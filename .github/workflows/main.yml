@@ -42,6 +42,12 @@ jobs:
         with:
           root_file: main.tex
           working_directory: Slides/Manipulator_Equations_for_Systems_with_Constraints/
+
+      - name: Compile LaTeX document Control_error_dynamics
+        uses: xu-cheng/latex-action@master
+        with:
+          root_file: main.tex
+          working_directory: Slides/Control_error_dynamics/
           
           
           
@@ -69,6 +75,12 @@ jobs:
         with:
           name: Manipulator_Equations_for_Systems_with_Constraints.pdf
           path: Slides/Manipulator_Equations_for_Systems_with_Constraints/main.pdf         
+
+      - name: Save Control_error_dynamics artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: Control_error_dynamics.pdf
+          path: Slides/Control_error_dynamics/main.pdf        
           
           
           
@@ -83,6 +95,7 @@ jobs:
           git add Slides/Constraints/main.pdf
           git add Slides/Mechanical_Equations_for_Systems_with_Constraints/main.pdf
           git add Slides/Manipulator_Equations_for_Systems_with_Constraints/main.pdf
+          git add Slides/Control_error_dynamics/main.pdf
           
           git commit -m "Update compiled PDFs"
           git push
