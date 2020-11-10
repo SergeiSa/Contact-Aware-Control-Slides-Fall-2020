@@ -15,6 +15,7 @@
 * Lecture 4 - https://youtu.be/6Tz1z5zgQ8A
 * Lecture 5 - https://youtu.be/7pELVxRf36Q
 * Lecture 6 - https://youtu.be/Ez4qgTfX6h8
+* Lecture 7 - https://youtu.be/VxWdTrLJvCg
 
 # For contributors:
 
