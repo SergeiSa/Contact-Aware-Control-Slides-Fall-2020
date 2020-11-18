@@ -8,6 +8,8 @@
 * Lecture 6 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Control_error_dynamics
 * Lecture 7 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Unilateral_constraints_friction_cone
 * Lecture 8 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Control_with_QP_and_SOCP
+* Seminar 9 - N/A
+* Seminar 10 - N/A
 
 # Lecture videos
 
@@ -19,7 +21,7 @@
 * Lecture 6 - https://youtu.be/Ez4qgTfX6h8
 * Lecture 7 - https://youtu.be/VxWdTrLJvCg
 * Lecture 8 -
-* Seinar 9 - https://youtu.be/rK-iN0aYrsY
+* Seminar 9 - https://youtu.be/rK-iN0aYrsY
 
 # For contributors:
 
