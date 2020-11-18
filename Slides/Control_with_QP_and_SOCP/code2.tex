@@ -1,0 +1,12 @@
+\begin{lstlisting}[language=Matlab]
+M = [1 0 1; 0 5 0; 1 0 3];
+C = [1 7 2];
+y = 1;
+
+cvx_begin
+variables x(3);
+minimize( x' * M * x );
+subject to
+    C*x == y;
+cvx_end
+\end{lstlisting}

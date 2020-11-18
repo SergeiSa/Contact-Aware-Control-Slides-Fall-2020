@@ -1,0 +1,372 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+
+\title{Unilateral constraints, friction cone}
+\subtitle{Contact-aware Control, Lecture 7}
+\author{by Sergei Savin}
+\centering
+\date{Fall 2020}
+
+
+
+\begin{document}
+\maketitle
+
+
+\begin{frame}{Content}
+
+\begin{itemize}
+\item Physical contact
+\item Models of physical contact
+\item Friction cone
+\begin{itemize}
+\item Visual idea
+\item Friction and normal reaction force relation
+\item Algebraic approach
+\end{itemize}
+\item Contact point
+\item Contact through a body
+\begin{itemize}
+\item Static case
+\item Rotations
+\end{itemize}
+\item Violating friction cone constraint
+\item Read more
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Physical contact}
+% \framesubtitle{O}
+\begin{flushleft}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.45 \linewidth]{fig_SPOT.jpeg}
+    \caption{Spot, a quadruped robot by Boston Dynamics}
+    \label{fig:spot}
+\end{figure}
+
+Consider Spot: are its contacts well described as $\bo{g}(\bo{q}) = 0$?
+
+\bigskip
+
+The answer is no, as its contacts can indeed break from the constraint manifold $\bo{g}(\bo{q}) = 0$. In particular, its feet can move up. They can't move down, however. And if they want to move sideways, they will have to first produce enough force to overcome static friction.
+
+\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Models of physical contact}
+% \framesubtitle{O}
+\begin{flushleft}
+
+Typical contact models that come close to describing real world physical contact are:
+
+\begin{figure}
+    \centering
+    \includegraphics[width= \linewidth]{fig2.png}
+    % \caption{}
+    \label{fig:contact}
+\end{figure}
+
+\scriptsize{Picture is from \emph{Sancho-Bru, J.L., P\'{e}rez-Gonz\'{a}lez, A., Mora, M.C., L\'{o}n, B.E., Vergara, M., Iserte, J.L., Rodriguez-Cervantes, P.J. and Morales, A., 2011. Towards a realistic and self-contained biomechanical model of the hand. In Theoretical biomechanics. IntechOpen.}}
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Friction cone}
+\framesubtitle{Visual idea}
+\begin{flushleft}
+
+You can visualize friction cone as all possible reaction forces, acting at the contact point:
+
+\begin{figure}
+    \centering
+    \input{fig_twolink_2}
+    % \caption{}
+    \label{fig:contact}
+\end{figure}
+
+You can think of it as a cone, pointing at the contact surface at the right angle (perpendicular), whole angle is proportional to the friction coefficient.
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Friction cone}
+\framesubtitle{Friction and normal reaction force relation}
+\begin{flushleft}
+
+\begin{figure}
+    \centering
+    \input{fig_twolink_2_small}
+    % \caption{}
+    \label{fig:contact}
+\end{figure}
+
+Let $\bo{f}_n$ be the normal component (perpendicular to the surface locally) of the reaction force, also known as normal reaction; and let $\bo{f}_{fr}$ be tangential component (a vector lying in the tangent plane to the surface, constructed at the contact point), or friction force.
+
+\bigskip
+
+Then we can define a friction model as follows:
+
+\begin{equation}
+    ||\bo{f}_{fr}|| \leq \mu ||\bo{f}_n||
+\end{equation}
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Friction cone}
+\framesubtitle{Algebraic approach, part 1}
+\begin{flushleft}
+
+Note that expression $||\bo{f}_{fr}|| \leq \mu ||\bo{f}_n||$ \emph{does not} describe friction cone, nor represents a realistic contact. The reason is: it doesn't limit the direction of the normal reaction force.
+
+\bigskip
+
+One way to remedy it is to first define normal direction that points from the surface as a unit vector $\bo{n}$, and then add two unit vectors that represent a basis in the tangent plane to the surface: $\tau_1$, $\tau_2$. Note that $\tau_1$ and $\tau_2$ can be found as a null space of $\bo{n}$, considering the latter as a matrix with a single column vector.
+
+\bigskip
+
+Then we define total reaction force as $\bo{f}$, $\bo{f}_n = \bo{n}(\bo{n}^\top \bo{f})$ and $\bo{f}_{fr} = \bo{T}(\bo{T}^\top \bo{f})$ where $\bo{T} = [\tau_1 \ \tau_2]$.
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Friction cone}
+\framesubtitle{Algebraic approach, part 2}
+\begin{flushleft}
+
+With that, we can define friction cone as follows:
+
+\begin{equation}
+\label{eq:friction_cone}
+    || [\tau_1 \ \tau_2]^\top \bo{f} || \leq \mu \bo{n}^\top \bo{f}
+\end{equation}
+
+Note that $\bo{n}^\top \bo{f}$ is a scalar and represents norm of the normal reaction force as long as normal reaction and the normal unit vector $\bo{n}$ have a positive dot product. But if they don't, it means that the friction cone is violated, so this scenario is of no interest to us. In fact, \eqref{eq:friction_cone} prevents this, since if the mentioned above dot product is negative, the condition will never hold, as its left-hand-side is always positive, being a norm.
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Friction cone}
+\framesubtitle{Algebraic approach, part 3}
+\begin{flushleft}
+
+Notice that this expression:
+
+\begin{equation}
+\label{eq:friction_cone_2}
+    || [\tau_1 \ \tau_2]^\top \bo{f} || \leq \mu \bo{n}^\top \bo{f}
+\end{equation}
+
+...assumes that your \emph{decision variable} is $\bo{f}$. This is a good parameterization choice, but not the only one. Another one is the following:
+
+\begin{equation}
+\label{eq:friction_cone_3}
+\begin{cases}
+    \sqrt{t_1^2 + t_2^2} \leq \mu n \\
+    \bo{f}_{fr} = t_1 \tau_1 + t_2 \tau_2 \\
+    \bo{f}_n = n \bo{n}  
+\end{cases}
+\end{equation}
+
+Unlike the previous one, this representation is explicit with respect to the basis in which the forces are expressed (namely, basis is formed by vectors $\tau_1$, $\tau_2$, $\bo{n} $). This gives us an advantage in making expressions for the conic constraint simpler.
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Contact point}
+% \framesubtitle{Algebraic approach, part 3}
+\begin{flushleft}
+
+Assume you have a single point $K$ at which the contact takes place. This contact takes away 3 DoF of the robot:
+
+\begin{equation}
+    \begin{cases}
+    x_K(\bo{q}) = x_K(0) \\
+    y_K(\bo{q}) = y_K(0) \\
+    z_K(\bo{q}) = z_K(0)
+    \end{cases}
+\end{equation}
+
+Now assume that there is no friction, and the contact only prevents motion in the normal direction $\bo{n}$ to the contact surface. Then the contact only takes away one DoF:
+
+\begin{equation}
+    \bo{n}^\top \bo{r}_K(\bo{q}) = g_K(\bo{q})
+\end{equation}
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Contact through a body}
+\framesubtitle{Static case}
+\begin{flushleft}
+
+You can describe contact point as restricting motion of a single point, as was suggested on the previous slide. Alternatively, you can describe a contact integration in terms of the restriction it places on the body coming in contact. 
+
+\bigskip
+
+For example, here is a 6-DoF contact, which prevents all motion (this is a constraint for robot's feet when they rest on the ground, or the end effector when it rests on the immobile surface it holds onto):
+
+\begin{equation}
+    \begin{cases}
+    x_K(\bo{q}) = x_K(0), \ \  y_K(\bo{q}) = y_K(0),  \ \ z_K(\bo{q}) = z_K(0) \\
+    \varphi_K(\bo{q}) = \varphi_K(0), \ \ \theta_K(\bo{q})  = \theta_K(0), \ \ \psi_K(\bo{q})    = \psi_K(0)
+    \end{cases}
+\end{equation}
+
+where $\varphi_K$, $\theta_K$, $\psi_K$ are Euler angles of the body in contact. 
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Contact through a body}
+\framesubtitle{Static case, part 1}
+\begin{flushleft}
+
+Assume the body has points $K_1$, $K_2$, ..., $K_k$, where $k \geq 3$ and the points are not lying on the same line. Then it is possible to define a constraint that makes the body static by requiring all those points to be static:
+
+\begin{equation}
+    \begin{cases}
+    x_{K, i}(\bo{q}) = x_{K, i}(0) \\
+    y_{K, i}(\bo{q}) = y_{K, i}(0) \\
+    z_{K, i}(\bo{q}) = z_{K, i}(0), \ i = 1, \ ... \ k
+    \end{cases}
+\end{equation}
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Contact through a body}
+\framesubtitle{Static case, part 2}
+\begin{flushleft}
+
+Note that increasing the number of non-colinear points beyond three doesn't change the fact that the body is stable. But there are two important observations here:
+
+\begin{itemize}
+    \item Number of points will make a difference if there are a friction cone constraints on the reaction force.
+    \item Different choice of contact points will lead to different constraints expressions, and hence different Jacobians and different Cartesian reaction forces.
+\end{itemize}
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Contact through a body}
+\framesubtitle{Rotations}
+\begin{flushleft}
+
+Consider a 4-DoF contact, which prevents motion of the contact point and the rotation of the body around the axis parallel to the: 
+
+
+\begin{equation}
+    \begin{cases}
+    \bo{n}^\top \omega_K = 0 \\  
+    x_K(\bo{q}) = x_K(0) \\
+    y_K(\bo{q}) = y_K(0) \\
+    z_K(\bo{q}) = z_K(0)
+    \end{cases}
+\end{equation}
+
+where $\omega_K$ is the angular velocity of the body. You can prove it that it is impossible to write that constraint in terms of the orientations, since there is no function of the orientation that is being preserved under this constraint. 
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Contact through a body}
+\framesubtitle{Rotations, remarks}
+\begin{flushleft}
+
+\begin{equation}
+    \bo{n}^\top \omega_K = 0
+\end{equation}
+
+It is a \emph{kinematic constraint}, and to appreciate the difference we can remember that previously we differentiated out constraints twice to achieve the desired DAE form; here we would only need to differentiate once.
+
+\bigskip
+
+Hence, our mathematics would need to be checked or re-worked, before we can use these constraints.
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Violating friction cone constraint}
+% \framesubtitle{Algebraic approach, part 3}
+\begin{flushleft}
+
+As implied by their name, unilateral constraints don't always hold. Here are basic scenarios when they are violated:
+
+\begin{itemize}
+    \item The force required to maintain the constraint is such that $\bo{n}^\top \bo{f}$ would have been negative. This means that the contact is lost (disengaged).
+    \item The force required to maintain the constraint lies outside of the friction cone, while $\bo{n}^\top \bo{f}$ is still positive. This means that the contact point slides along the contact surface. This can be modelled as contact with no static friction discussed previously, but with  additional sliding friction force (often modelled as being proportional to the normal reaction force, sometimes dependant on the velocity of the sliding motion.
+\end{itemize}
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Read more}
+% \framesubtitle{Parameter estimation}
+\begin{flushleft}
+
+You can read more at:
+
+\begin{itemize}
+    \item \href{https://scaron.info/teaching/friction-cones.html}{Friction cones - Stephane Caron}
+\end{itemize}
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\href{https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020}{github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020}}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\end{frame}
+
+\end{document}

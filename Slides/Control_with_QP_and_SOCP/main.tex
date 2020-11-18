@@ -1,0 +1,376 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+
+\title{Control with QP and SOCP}
+\subtitle{Contact-aware Control, Lecture 8}
+\author{by Sergei Savin}
+\centering
+\date{Fall 2020}
+
+
+
+\begin{document}
+\maketitle
+
+
+\begin{frame}{Content}
+
+\begin{itemize}
+\item Quadratic programming
+\begin{itemize}
+\item Special case with an analytic solution
+\item Example
+\item Example - solution using quadprog
+\item Example - solution using CVX
+\item Application
+\item What it can’t do
+\end{itemize}
+\item Second-order cone programming
+\item Friction cone and SOCP
+\begin{itemize}
+\item Formulation
+\item Application
+\end{itemize}
+\item Read more
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Quadratic programming}
+% \framesubtitle{Part 1}
+\begin{flushleft}
+
+There are special cases of optimization problems that can be solved numerically very efficiently. One of those is \emph{quadratic programming}.
+
+\bigskip
+
+General form of a quadratic program (QP) is given below:
+
+%
+\begin{equation}
+\begin{aligned}
+& \underset{\mathbf{x}}{\text{minimize}}
+& & \mathbf{x}^\top \mathbf{H} \mathbf{x} + \mathbf{f}^\top\mathbf{x}, \\
+& \text{subject to}
+& & \begin{cases}
+    \mathbf{A}\mathbf{x} \leq \mathbf{b}, \\
+    \mathbf{C}\mathbf{x} = \mathbf{d}.
+    \end{cases}
+\end{aligned}
+\end{equation}
+
+where $\mathbf{H}$ is positive-definite and $\mathbf{A}\mathbf{x} \leq \mathbf{b}$ describe a \emph{convex region}.
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Quadratic programming}
+\framesubtitle{Special case with an analytic solution}
+\begin{flushleft}
+
+If there are no inequality constraints: 
+
+\begin{equation}
+\begin{aligned}
+& \underset{\mathbf{x}}{\text{minimize}}
+& & \mathbf{x}^\top \mathbf{H} \mathbf{x} + \mathbf{c}^\top\mathbf{x}, \\
+& \text{subject to}
+& & \mathbf{A} \mathbf{x} = \mathbf{b}.
+\end{aligned}
+\end{equation}
+
+a quadratic program can be solved analytically.
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Quadratic programming}
+\framesubtitle{Example}
+\begin{flushleft}
+
+We have the following problem: find such $\mathbf x$ that minimizes $\mathbf x^\top \mathbf M \mathbf x$, while $\mathbf C \mathbf x = \mathbf y$. In other words:
+
+\begin{equation} \label{eq:Example1:1}
+\begin{aligned}
+& \underset{\mathbf  x}{\text{minimize}}
+& & \mathbf x^\top \mathbf M \mathbf x, \\
+& \text{subject to}
+& & \mathbf C \mathbf x = \mathbf y.
+\end{aligned}
+\end{equation}
+
+More concrete:
+
+\begin{equation} \label{eq:Example1:2}
+\begin{aligned}
+& \underset{\mathbf  x}{\text{minimize}}
+& & \begin{bmatrix} x_1 & x_2 & x_3 \end{bmatrix}
+\begin{bmatrix}  
+   1 & 0 & 1 \\
+   0 & 5 & 0 \\
+   1 & 0 & 3 \\
+   \end{bmatrix}
+\begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix}, \\
+& \text{subject to}
+& & \begin{bmatrix} 1 & 7 & 2 \end{bmatrix}
+\begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix}
+= 1.
+\end{aligned}
+\end{equation}
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Quadratic programming}
+\framesubtitle{Example - solution using quadprog}
+\begin{flushleft}
+
+We can use a dedicated solver for this class of problems - \texttt{quadprog} provided by MATLAB. Here is the solution:
+
+\input{code1}
+
+Average solution time is \textbf{0.56} ms
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Quadratic programming}
+\framesubtitle{Example - solution using CVX}
+\begin{flushleft}
+
+Alternatively we can invoke one of the most powerful convex optimization tools with a user-friendly coding style - CVX:
+
+\input{code2}
+
+\href{http://cvxr.com/cvx/}{Official web page of the CVX package}
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}{Quadratic programming}
+\framesubtitle{Application}
+\begin{flushleft}
+
+Remember CTC control from the lecture on error dynamics:
+
+\begin{equation}
+\begin{cases}
+    \bo{v} = \bo{H}(\ddot{\bo{q}}^* + \bo{K}_d\dot{\bo{e}} + \bo{K}_p\bo{e}) + \bo{c} \\
+    \bo{T}\bo{u} + \bo{F}^\top \lambda = \bo{v}
+\end{cases}
+\end{equation}
+
+Assume that $\lambda = [\lambda_1^\top, \ ...  \lambda_m^\top]^\top \in \R^{3m}$, $\lambda_i \in \R^{3}$ and represents a $m$ individual unilateral contact with normal unit-vectors to the contact surface $\bo{n}_i$, and no friction. Then we can write the control law as a solution to the quadratic program:
+
+\begin{equation}
+\begin{aligned}
+& \underset{\bo{u}, \bo{v}, \lambda_i}{\text{minimize}}
+& & \mathbf{u}^\top \mathbf{u}, \\
+& \text{subject to}
+& & \begin{cases}
+    \bo{H}(\ddot{\bo{q}}^* + \bo{K}_d\dot{\bo{e}} + \bo{K}_p\bo{e}) + \bo{c} = \bo{v} \\
+    \bo{T}\bo{u} + \sum\limits_{i = 1}^m \bo{F}_i^\top \lambda_i = \bo{v} \\\
+    -\bo{n}_i^\top \lambda_i \leq 0
+\end{cases}
+\end{aligned}
+\end{equation}
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Quadratic programming}
+\framesubtitle{What it can't do}
+\begin{flushleft}
+
+Remember friction cone constraints:
+
+\begin{equation}
+\label{eq:friction_cone_2}
+    || [\tau_1 \ \tau_2]^\top \bo{f} || \leq \mu \bo{n}^\top \bo{f}
+\end{equation}
+
+These can't be directly represented in a quadratic program.
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Second-order cone programming}
+\framesubtitle{General form}
+\begin{flushleft}
+
+The general form of a Second-order cone program (SOCP) is:
+
+%
+\begin{equation}
+\begin{aligned}
+& \underset{\mathbf{x}}{\text{minimize}}
+& & \mathbf{f}^\top\mathbf{x}, \\
+& \text{subject to}
+& & \begin{cases}
+    ||\mathbf{A}_i\mathbf{x} + \mathbf{b}_i||_2 \leq 
+     \mathbf{c}_i^\top \mathbf{x} + d_i, \\
+    \mathbf{F}\mathbf{x} = g.
+    \end{cases}
+\end{aligned}
+\end{equation}
+
+QP are a subset of SOCP.
+ 
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Friction cone and SOCP}
+% \framesubtitle{O}
+\begin{flushleft}
+
+We already saw that a no-friction contact can be represented as a QP. Next we will try to show that friction cone (a more general model) can be represented as a SOPC (a more general optimization problem type).
+
+\begin{figure}
+    \centering
+    \includegraphics[width= 0.85\linewidth]{fig2.png}
+    % \caption{}
+    \label{fig:contact}
+\end{figure}
+
+\scriptsize{Picture is from \emph{Sancho-Bru, J.L., P\'{e}rez-Gonz\'{a}lez, A., Mora, M.C., L\'{o}n, B.E., Vergara, M., Iserte, J.L., Rodriguez-Cervantes, P.J. and Morales, A., 2011. Towards a realistic and self-contained biomechanical model of the hand. In Theoretical biomechanics. IntechOpen.}}
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Friction cone and SOCP}
+\framesubtitle{Formulation}
+\begin{flushleft}
+
+Coming back to the the friction cone general view:
+
+\begin{equation}
+    || [\tau_1 \ \tau_2]^\top \bo{f} || \leq \mu \bo{n}^\top \bo{f}
+\end{equation}
+
+This is has the form of a conic constraint, which is admissible for SOCP:
+
+\begin{equation}
+    ||\mathbf{A}_i\mathbf{x} + \mathbf{b}_i||_2 \leq 
+     \mathbf{c}_i^\top \mathbf{x} + d_i
+\end{equation}
+
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Friction cone and SOCP}
+\framesubtitle{Application}
+\begin{flushleft}
+
+Consider this problem again:
+
+\begin{equation}
+\begin{cases}
+    \bo{v} = \bo{H}(\ddot{\bo{q}}^* + \bo{K}_d\dot{\bo{e}} + \bo{K}_p\bo{e}) + \bo{c} \\
+    \bo{T}\bo{u} + \bo{F}^\top \lambda = \bo{v}
+\end{cases}
+\end{equation}
+
+But this time we require that:
+
+\begin{equation}
+    || [\tau_{i,1} \ \tau_{i,2}]^\top \lambda_i || \leq \mu \bo{n}_i^\top \lambda_i
+\end{equation}
+
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Friction cone and SOCP}
+\framesubtitle{Application, part 2}
+\begin{flushleft}
+
+Solution can take the form of a second-order cone program:
+
+\begin{equation}
+\begin{aligned}
+& \underset{\bo{u}, \bo{v}, \lambda_i}{\text{minimize}}
+& & \mathbf{u}^\top \mathbf{u}, \\
+& \text{subject to}
+& & \begin{cases}
+    \bo{H}(\ddot{\bo{q}}^* + \bo{K}_d\dot{\bo{e}} + \bo{K}_p\bo{e}) + \bo{c} = \bo{v} \\
+    \bo{T}\bo{u} + \sum\limits_{i = 1}^m \bo{F}_i^\top \lambda_i = \bo{v} \\\
+    || [\tau_{i,1} \ \tau_{i,2}]^\top \lambda_i || \leq \mu \bo{n}_i^\top \lambda_i
+\end{cases}
+\end{aligned}
+\end{equation}
+
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}{Read more}
+% \framesubtitle{Parameter estimation}
+\begin{flushleft}
+
+You can read and watch more at:
+
+\begin{itemize}
+    \item \href{http://web.cvxr.com/cvx/doc/}{CVX user guide}
+    \item \href{https://www.mathworks.com/help/optim/ug/quadprog.html}{quadprog - MATLAB documentation}
+    \item \href{https://youtu.be/bbyF89OnpBo}{Computational Intelligence 2020, Lecture 5 (Least Squares and Quadratic Programming)}
+    \item \href{https://youtu.be/sVkUht9-py0}{Computational Intelligence 2020, Lecture 6 (Domain, Convex Domains)}
+    \item \href{https://youtu.be/4FboGNcsQhU}{Computational Intelligence 2020, Lecture 7 (Linear inequality representation of convex domains)}
+    \item \href{https://youtu.be/c4qroDnvDak}{Computational Intelligence 2020, Lecture 8 (QCQP, SOCP)}
+\end{itemize}
+
+
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\href{https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020}{github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020}}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\end{frame}
+
+\end{document}
