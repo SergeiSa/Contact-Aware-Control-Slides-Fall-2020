@@ -6,6 +6,8 @@
 * Lecture 4 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Manipulator_Equations_for_Systems_with_Constraints
 * Lecture 5 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Solving_equations_with_constraints
 * Lecture 6 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Control_error_dynamics
+* Lecture 7 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Unilateral_constraints_friction_cone
+* Lecture 8 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Control_with_QP_and_SOCP
 
 # Lecture videos
 
@@ -16,6 +18,8 @@
 * Lecture 5 - https://youtu.be/7pELVxRf36Q
 * Lecture 6 - https://youtu.be/Ez4qgTfX6h8
 * Lecture 7 - https://youtu.be/VxWdTrLJvCg
+* Lecture 8 -
+* Seinar 9 - https://youtu.be/rK-iN0aYrsY
 
 # For contributors:
 
