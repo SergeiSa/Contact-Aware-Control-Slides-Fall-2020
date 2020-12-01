@@ -10,6 +10,7 @@
 * Lecture 8 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Control_with_QP_and_SOCP
 * Seminar 9 - N/A
 * Seminar 10 - N/A
+* Lecture 13 - 
 
 # Lecture videos
 
@@ -20,8 +21,15 @@
 * Lecture 5 - https://youtu.be/7pELVxRf36Q
 * Lecture 6 - https://youtu.be/Ez4qgTfX6h8
 * Lecture 7 - https://youtu.be/VxWdTrLJvCg
-* Lecture 8 -
+* Lecture 8 - https://youtu.be/02Qi54fvst0
 * Seminar 9 - https://youtu.be/rK-iN0aYrsY
+* Lecture 10 - https://youtu.be/1CrnxJq4NnI
+* Lecture 12: 
+* * part 1 - https://youtu.be/ZbfLg9qnTNs
+* * part 2 - https://youtu.be/hjWRoGx2mGI
+* * part 3 - https://youtu.be/C2bdUWxCJyw
+* * part 4 - https://youtu.be/NDJcNISxKII
+* Lecture 13 - https://youtu.be/fKkTl1MJsXI
 
 # For contributors:
 
