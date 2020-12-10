@@ -1,0 +1,299 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+
+\title{Switching dynamics with MICP}
+\subtitle{Contact-aware Control, Lecture 14}
+\author{by Sergei Savin}
+\centering
+\date{Fall 2020}
+
+
+
+\begin{document}
+\maketitle
+
+
+\begin{frame}{Content}
+
+\begin{itemize}
+\item Switching between LTIs
+\item Mixed Integer Quadratic Programming (MIQP)
+\item Big-M method: example
+\item Switching between LTIs via MICP
+\item Switching between nonlinear dynamics via MICP
+% \item Read more
+\end{itemize}
+
+\end{frame}
+
+
+
+
+\begin{frame}{Switching between different contact scenarios}
+% \framesubtitle{O}
+\begin{flushleft}
+
+So far we know two major ways of describing systems with constraints:
+
+\begin{itemize}
+    \item Using explicit constraints, such as $\begin{cases}
+    \bo{H} \ddot{\bo{q}} + \bo{c} = \bo{T}\bo{u} + \bo{F}^\top \lambda \\
+    \bo{F} \ddot{\bo{q}} + \dot{\bo{F}} \dot{\bo{q}} = 0
+\end{cases}$
+    
+    \item Using implicit constraints (including representation in new coordinates via projection onto the constraint manifold), such as $\mathbf{x}_{i+1} = \mathbf{A} \mathbf{x}_i + \mathbf{B} \mathbf{u}_i + \mathbf{c}$
+\end{itemize}
+
+In the first case, a new contact scenario is simply a new set of constraints. In the second - it is a new set of equations, possibly in different coordinates.
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Switching between LTIs}
+% \framesubtitle{O}
+\begin{flushleft}
+
+Consider groups of equations representing different modes of a switching dynamics:
+
+\begin{equation}
+    \mathbf{x}_{i+1} = \mathbf{A}_1 \mathbf{x}_i + \mathbf{B}_1 \mathbf{u}_i + \mathbf{c}_1
+\end{equation}
+
+and
+
+\begin{equation}
+    \mathbf{x}_{i+1} = \mathbf{A}_2 \mathbf{x}_i + \mathbf{B}_2 \mathbf{u}_i + \mathbf{c}_2
+\end{equation}
+
+where $\mathbf{A}_i$ is the state matrix, $\mathbf{B}_i$ is the control matrix and $\mathbf{c}_i$ is the affine term of the affine dynamics model.
+
+\bigskip
+
+This may represent two contact scenarios, where the original dynamics is projected onto the respective constraint manifolds. Here we assume that the state coordinates are the same between different scenarios, which doesn't have to always be the case.
+
+\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Switching between LTIs}
+% \framesubtitle{O}
+\begin{flushleft}
+
+This type of problem can be represented using mixed-integer approach and a big-M relaxation.
+
+\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Reminder: Quadratic programming}
+% \framesubtitle{Part 1}
+\begin{flushleft}
+
+General form of a quadratic program is given below:
+
+%
+\begin{equation}
+\begin{aligned}
+& \underset{\mathbf{x}}{\text{minimize}}
+& & \mathbf{x}^\top \mathbf{H} \mathbf{x} + \mathbf{f}^\top\mathbf{x}, \\
+& \text{subject to}
+& & \begin{cases}
+    \mathbf{A}\mathbf{x} \leq \mathbf{b}, \\
+    \mathbf{C}\mathbf{x} = \mathbf{d}.
+    \end{cases}
+\end{aligned}
+\end{equation}
+
+where $\mathbf{H}$ is positive-definite and $\mathbf{A}\mathbf{x} \leq \mathbf{b}$ describe a \emph{convex region}.
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Mixed Integer Quadratic Programming (MIQP)}
+\framesubtitle{General form}
+\begin{flushleft}
+
+A general form of a mixed-integer quadratic program is:
+
+%
+\begin{equation} \label{QP}
+\begin{aligned}
+& \underset{\mathbf{x}, \mathbf{y}}{\text{minimize}}
+& & 
+\begin{bmatrix}
+\mathbf{x} & \mathbf{y}
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf{H}_{11} & \mathbf{H}_{12} \\
+\mathbf{H}_{21} & \mathbf{H}_{22}
+\end{bmatrix} 
+\begin{bmatrix}
+\mathbf{x} \\
+\mathbf{y}
+\end{bmatrix} +
+\begin{bmatrix}
+\mathbf{f}_1^\top & \mathbf{f}_2\top
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf{x} \\
+\mathbf{y}
+\end{bmatrix}, \\
+& \text{subject to}
+& & \begin{cases} 
+\begin{bmatrix}
+\mathbf{A}_{11} & \mathbf{A}_{12} \\
+\mathbf{A}_{21} & \mathbf{A}_{22}
+\end{bmatrix} 
+\begin{bmatrix}
+\mathbf{x} \\
+\mathbf{y}
+\end{bmatrix}
+\leq 
+\begin{bmatrix}
+\mathbf{b}_1 \\
+\mathbf{b}_2
+\end{bmatrix}, \\ 
+\\
+\begin{bmatrix}
+\mathbf{C}_{11} & \mathbf{C}_{12} \\
+\mathbf{C}_{21} & \mathbf{C}_{22}
+\end{bmatrix} 
+\begin{bmatrix}
+\mathbf{x} \\
+\mathbf{y}
+\end{bmatrix} = 
+\begin{bmatrix}
+\mathbf{d}_1 \\
+\mathbf{d}_2
+\end{bmatrix},  \\
+\mathbf{y} \in \mathbb{N}^n.
+\end{cases}
+%
+\end{aligned}
+\end{equation}
+ 
+Other mixed-integer convex programs can be constructed likewise  from their pure convex counterparts.
+ 
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Big-M method: example}
+% \framesubtitle{}
+\begin{flushleft}
+
+Example: you have three systems of inequalities $\mathbf{A}_1 \mathbf{x} \leq \mathbf{b}_1$, $\mathbf{A}_2 \mathbf{x} \leq \mathbf{b}_2$, $\mathbf{A}_3 \mathbf{x} \leq \mathbf{b}_3$ and are happy if at least one holds. Then, you can write a big-M relaxation for the problem as follows:
+
+\begin{equation}
+    \begin{cases}
+    \mathbf{A}_1 \mathbf{x} \leq \mathbf{b}_1 + M \cdot \mathbf{1} \cdot (1 - c_1) \\
+    \mathbf{A}_2 \mathbf{x} \leq \mathbf{b}_2 + M \cdot \mathbf{1} \cdot (1 - c_2) \\
+    \mathbf{A}_3 \mathbf{x} \leq \mathbf{b}_3 + M \cdot \mathbf{1} \cdot (1 - c_3) \\
+    c_1 + c_2 + c_3 = 1 \\
+    c_i  \in \{0, \ 1 \}
+    \end{cases}
+\end{equation}
+
+where $\mathbf{1}$ is a vector of all ones. Notice that constraint $c_1 + c_2 + c_3 = 1$ can be replaced with $c_1 + c_2 + c_3 >= 1$, allowing to relax either none  or one or two regions.
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Switching between LTIs via MICP}
+% \framesubtitle{O}
+\begin{flushleft}
+
+With the methods described above, we can represent switching dynamics via MICP using big-M and a norm trick:
+
+
+\begin{equation}
+    \begin{cases}
+    || -\mathbf{x}_{i+1} + \mathbf{A}_1 \mathbf{x}_i + \mathbf{B}_1 \mathbf{u}_i + \mathbf{c}_1 || \leq 
+    M \cdot (1 - c_1) \\
+    || -\mathbf{x}_{i+1} + \mathbf{A}_2 \mathbf{x}_i + \mathbf{B}_2 \mathbf{u}_i + \mathbf{c}_2 || \leq 
+    M \cdot (1 - c_2) \\
+    c_1 + c_2 = 1 \\
+    c_i  \in \{0, \ 1 \}
+    \end{cases}
+\end{equation}
+
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Switching between nonlinear dynamics via MICP}
+% \framesubtitle{O}
+\begin{flushleft}
+
+Same way, we can represent switching nonlinear dynamics via MICP:
+
+\begin{equation}
+    \begin{cases}
+    \mathbf{H}\ddot{\mathbf{q}} + \mathbf{C}\dot{\mathbf{q}} + \mathbf{g} = \mathbf{T}\mathbf{u} + \sum \mathbf{F}_i^\top \lambda_i \\
+    || \lambda_i || \leq 
+    M \cdot c_i \\
+    || \mathbf{F}_i \ddot{\mathbf{q}} + \dot{\mathbf{F}}_i \dot{\mathbf{q}} || \leq 
+    M \cdot (1 - c_i) \\
+    \sum c_i = 1 \\
+    c_i  \in \{0, \ 1 \}
+    \end{cases}
+\end{equation}
+
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Replacing norm with linear inequalities}
+% \framesubtitle{O}
+\begin{flushleft}
+
+Notice that the norm trick makes the problem into a mixed-integer SOCP.
+
+\begin{equation}
+    || \bo{A} \bo{x} + \bo{b}  || \leq 
+    M \cdot (1 - c)
+\end{equation}
+
+instead we can replace the sphere described with a norm with cube described via linear inequalities:
+
+\begin{equation}
+    \bo{C} (\bo{A} \bo{x} + \bo{b}) \leq 
+    M \cdot (1 - c) \bo{1}
+\end{equation}
+
+where $\bo{C} = \begin{bmatrix} \bo{I} \\ -\bo{I} \end{bmatrix}$
+
+\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Thank you!}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\href{https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020}{github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020}}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\end{frame}
+
+\end{document}
