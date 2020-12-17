@@ -12,6 +12,7 @@ on:
       - master
 
 
+
 jobs:
   build_latex:
     runs-on: ubuntu-latest
