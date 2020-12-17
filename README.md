@@ -10,7 +10,8 @@
 * Lecture 8 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Control_with_QP_and_SOCP
 * Seminar 9 - N/A
 * Seminar 10 - N/A
-* Lecture 13 - 
+* Lecture 13 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Constrained_LQR
+* Lecture 14 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Switching_dynamics_with_MICP
 
 # Lecture videos
 
