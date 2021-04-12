@@ -1,17 +1,17 @@
 # Lecture slides:
 
-* Lecture 1 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Introduction
-* Lecture 2 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Constraints
-* Lecture 3 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Mechanical_Equations_for_Systems_with_Constraints
-* Lecture 4 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Manipulator_Equations_for_Systems_with_Constraints
-* Lecture 5 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Solving_equations_with_constraints
-* Lecture 6 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Control_error_dynamics
-* Lecture 7 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Unilateral_constraints_friction_cone
-* Lecture 8 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Control_with_QP_and_SOCP
+* Lecture 1 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/blob/main/Slides/Introduction/main.pdf
+* Lecture 2 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Constraints/main.pdf
+* Lecture 3 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Mechanical_Equations_for_Systems_with_Constraints/main.pdf
+* Lecture 4 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Manipulator_Equations_for_Systems_with_Constraints/main.pdf
+* Lecture 5 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Solving_equations_with_constraints/main.pdf
+* Lecture 6 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Control_error_dynamics/main.pdf
+* Lecture 7 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Unilateral_constraints_friction_cone/main.pdf
+* Lecture 8 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Control_with_QP_and_SOCP/main.pdf
 * Seminar 9 - N/A
 * Seminar 10 - N/A
-* Lecture 13 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Constrained_LQR
-* Lecture 14 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Switching_dynamics_with_MICP
+* Lecture 13 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Constrained_LQR/main.pdf
+* Lecture 14 - https://github.com/SergeiSa/Contact-Aware-Control-Slides-Fall-2020/tree/main/Slides/Switching_dynamics_with_MICP/main.pdf
 
 # Lecture videos
 
